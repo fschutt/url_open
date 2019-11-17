@@ -32,19 +32,20 @@ impl UrlOpen for Url {
 
 #[cfg(target_os = "windows")]
 pub fn open(url: &Url) {
-    extern crate shell32;
     extern crate winapi;
 
     use std::ffi::CString;
     use std::ptr;
+    use winapi::um::shellapi::ShellExecuteA;
 
     unsafe {
-        shell32::ShellExecuteA(ptr::null_mut(),
-                               CString::new("open").unwrap().as_ptr(),
-                               CString::new(url.to_string().replace("\n", "%0A")).unwrap().as_ptr(),
-                               ptr::null(),
-                               ptr::null(),
-                               winapi::SW_SHOWNORMAL);
+        ShellExecuteA(
+          ptr::null_mut(),
+          CString::new("open").unwrap().as_ptr(),
+          CString::new(url.to_string().replace("\n", "%0A")).unwrap().as_ptr(),
+          ptr::null(),
+          ptr::null(),
+          winapi::SW_SHOWNORMAL);
     }
 }
 

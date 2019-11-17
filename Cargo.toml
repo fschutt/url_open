@@ -9,7 +9,7 @@ keywords = ["url", "web", "browser"]
 license = "MIT"
 
 [dependencies]
-url = "*"
+url = "2.1.0"
 
-[dependencies.winapi]
-git = "https://github.com/overdrivenpotato/winapi-rs"
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3.8", features = ["shellapi"] }
