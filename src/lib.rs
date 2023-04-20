@@ -16,6 +16,8 @@
 //! ```
 
 extern crate url;
+#[cfg(target_os = "windows")]
+extern crate winapi;
 
 use url::Url;
 
@@ -32,29 +34,35 @@ impl UrlOpen for Url {
 
 #[cfg(target_os = "windows")]
 pub fn open(url: &Url) {
-    extern crate winapi;
-
     use std::ffi::CString;
     use std::ptr;
     use winapi::um::shellapi::ShellExecuteA;
 
+    let cs = CString::new("open").unwrap();
+    let cs2 = CString::new(url.to_string().replace("\n", "%0A")).unwrap();
+
     unsafe {
         ShellExecuteA(
-          ptr::null_mut(),
-          CString::new("open").unwrap().as_ptr(),
-          CString::new(url.to_string().replace("\n", "%0A")).unwrap().as_ptr(),
-          ptr::null(),
-          ptr::null(),
-          winapi::SW_SHOWNORMAL);
+            ptr::null_mut(),
+            cs.as_ptr(),
+            cs2.as_ptr(),
+            ptr::null(),
+            ptr::null(),
+            winapi::um::winuser::SW_SHOWNORMAL,
+        );
     }
 }
 
 #[cfg(target_os = "macos")]
 pub fn open(url: &Url) {
-    let _ = std::process::Command::new("open").arg(url.to_string()).output();
+    let _ = std::process::Command::new("open")
+        .arg(url.to_string())
+        .output();
 }
 
 #[cfg(target_os = "linux")]
 pub fn open(url: &Url) {
-    let _ = std::process::Command::new("xdg-open").arg(url.to_string()).output();
+    let _ = std::process::Command::new("xdg-open")
+        .arg(url.to_string())
+        .output();
 }

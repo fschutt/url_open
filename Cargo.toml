@@ -11,5 +11,5 @@ license = "MIT"
 [dependencies]
 url = "2.1.0"
 
-[target.'cfg(windows)'.dependencies]
+[target.'cfg(target_os = "windows")'.dependencies]
 winapi = { version = "0.3.8", features = ["shellapi"] }
