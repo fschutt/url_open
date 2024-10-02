@@ -13,16 +13,19 @@
 //! fn main() {
 //!     Url::parse("https://www.example.com/")
 //!         .expect("URL should be parsable")
-//!         .open();
+//!         .open()
+//!         .expect("should be able to open URL in web browser");
 //! }
 //! ```
 //!
 //! Its public API depends on the [`url` crate](https://crates.io/crates/url).
 
+use std::error::Error;
+
 use url::Url;
 
 #[cfg(target_os = "windows")]
-pub fn open(url: &Url) {
+pub fn open(url: &Url) -> Result<(), Box<dyn Error>> {
     use std::ptr;
     use windows::{
         core::{h, HSTRING, PCWSTR},
@@ -32,7 +35,7 @@ pub fn open(url: &Url) {
         },
     };
 
-    let _ = unsafe {
+    let hinst = unsafe {
         ShellExecuteW(
             HWND(ptr::null_mut()),
             h!("open"),
@@ -42,29 +45,35 @@ pub fn open(url: &Url) {
             SW_SHOW,
         )
     };
+
+    (hinst.0 > 32 as _)
+        .then_some(())
+        .ok_or_else(|| windows::core::Error::from_win32().into())
 }
 
 #[cfg(target_os = "macos")]
-pub fn open(url: &Url) {
-    let _ = std::process::Command::new("open")
+pub fn open(url: &Url) -> Result<(), Box<dyn Error>> {
+    std::process::Command::new("open")
         .arg(url.as_str())
-        .output();
+        .output()?;
+    Ok(())
 }
 
 #[cfg(target_os = "linux")]
-pub fn open(url: &Url) {
-    let _ = std::process::Command::new("xdg-open")
+pub fn open(url: &Url) -> Result<(), Box<dyn Error>> {
+    std::process::Command::new("xdg-open")
         .arg(url.as_str())
-        .output();
+        .output()?;
+    Ok(())
 }
 
 /// Convenience method to open URLs.
 pub trait UrlOpen {
-    fn open(&self);
+    fn open(&self) -> Result<(), Box<dyn Error>>;
 }
 
 impl UrlOpen for Url {
-    fn open(&self) {
-        open(self);
+    fn open(&self) -> Result<(), Box<dyn Error>> {
+        open(self)
     }
 }
