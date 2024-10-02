@@ -21,3 +21,10 @@ fn main() {
         .expect("should be able to open URL in web browser");
 }
 ```
+
+## Alternatives
+
+The following other crates use different means to accomplish the same:
+
+- https://crates.io/crates/webbrowser
+- https://crates.io/crates/open
