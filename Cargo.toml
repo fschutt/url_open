@@ -1,15 +1,16 @@
 [package]
 name = "url_open"
 version = "0.0.1"
-authors = ["Marko Mijalkovic <marko.mijalkovic97@gmail.com>"]
+edition = "2021"
 description = "Open URLs in the default browser"
-repository = "https://github.com/overdrivenpotato/open-url"
-readme = "README.md"
-keywords = ["url", "web", "browser"]
+documentation = "https://docs.rs/url_open"
+repository = "https://github.com/fschutt/url_open"
 license = "MIT"
+keywords = ["url", "browser"]
+categories = ["api-bindings", "os"]
 
 [dependencies]
-url = "2.1.0"
+url = "2.5.2"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 winapi = { version = "0.3.8", features = ["shellapi"] }

@@ -1,36 +1,23 @@
-//! # url_open
-//! A simple crate to open URLs in the default web browser.
+//! # `url_open`
 //!
-//! ### Usage
+//! A simple Rust crate to open URLs in the default web browser.
 //!
-//! ```no_run
-//! extern crate url;
-//! extern crate url_open;
+//! It uses [`ShellExecuteA()`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea) on Windows, an `open` subprocess on macOS, and an `xdg-open` subprocess on Linux.
 //!
+//! ## Usage
+//!
+//! ```rust
 //! use url::Url;
 //! use url_open::UrlOpen;
 //!
 //! fn main() {
-//!     Url::parse("https://github.com/overdrivenpotato/url_open").unwrap().open();
+//!     Url::parse("https://www.example.com/").expect("URL should be parsable").open();
 //! }
 //! ```
-
-extern crate url;
-#[cfg(target_os = "windows")]
-extern crate winapi;
+//!
+//! Its public API depends on the [`url` crate](https://crates.io/crates/url).
 
 use url::Url;
-
-/// Convenience method to open URLs
-pub trait UrlOpen {
-    fn open(&self);
-}
-
-impl UrlOpen for Url {
-    fn open(&self) {
-        open(self);
-    }
-}
 
 #[cfg(target_os = "windows")]
 pub fn open(url: &Url) {
@@ -65,4 +52,15 @@ pub fn open(url: &Url) {
     let _ = std::process::Command::new("xdg-open")
         .arg(url.to_string())
         .output();
+}
+
+/// Convenience method to open URLs.
+pub trait UrlOpen {
+    fn open(&self);
+}
+
+impl UrlOpen for Url {
+    fn open(&self) {
+        open(self);
+    }
 }
