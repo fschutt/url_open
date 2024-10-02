@@ -1,6 +1,9 @@
-extern crate url;
-extern crate url_open;
+use url::Url;
+use url_open::UrlOpen;
 
 fn main() {
-    url_open::open(&url::Url::parse("https://google.com").unwrap());
+    Url::parse("https://www.example.com/")
+        .expect("URL should be parsable")
+        .open()
+        .expect("should be able to open URL in web browser");
 }
