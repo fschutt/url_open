@@ -47,14 +47,14 @@ pub fn open(url: &Url) {
 #[cfg(target_os = "macos")]
 pub fn open(url: &Url) {
     let _ = std::process::Command::new("open")
-        .arg(url.to_string())
+        .arg(url.as_str())
         .output();
 }
 
 #[cfg(target_os = "linux")]
 pub fn open(url: &Url) {
     let _ = std::process::Command::new("xdg-open")
-        .arg(url.to_string())
+        .arg(url.as_str())
         .output();
 }
 
