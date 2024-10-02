@@ -2,7 +2,7 @@
 //!
 //! A simple Rust crate to open URLs in the default web browser.
 //!
-//! It uses [`ShellExecuteA()`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea) on Windows, an `open` subprocess on macOS, and an `xdg-open` subprocess on Linux.
+//! It uses [`ShellExecuteW()`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutew) with the `"open"` verb on Windows, an `open` subprocess on macOS, and an `xdg-open` subprocess on Linux.
 //!
 //! ## Usage
 //!
@@ -23,23 +23,25 @@ use url::Url;
 
 #[cfg(target_os = "windows")]
 pub fn open(url: &Url) {
-    use std::ffi::CString;
     use std::ptr;
-    use winapi::um::shellapi::ShellExecuteA;
+    use windows::{
+        core::{h, HSTRING, PCWSTR},
+        Win32::{
+            Foundation::HWND,
+            UI::{Shell::ShellExecuteW, WindowsAndMessaging::SW_SHOW},
+        },
+    };
 
-    let cs = CString::new("open").unwrap();
-    let cs2 = CString::new(url.to_string().replace("\n", "%0A")).unwrap();
-
-    unsafe {
-        ShellExecuteA(
-            ptr::null_mut(),
-            cs.as_ptr(),
-            cs2.as_ptr(),
-            ptr::null(),
-            ptr::null(),
-            winapi::um::winuser::SW_SHOWNORMAL,
-        );
-    }
+    let _ = unsafe {
+        ShellExecuteW(
+            HWND(ptr::null_mut()),
+            h!("open"),
+            &HSTRING::from(url.as_str()),
+            PCWSTR::null(),
+            PCWSTR::null(),
+            SW_SHOW,
+        )
+    };
 }
 
 #[cfg(target_os = "macos")]

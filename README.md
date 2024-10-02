@@ -4,7 +4,7 @@
 
 A simple Rust crate to open URLs in the default web browser.
 
-It uses [`ShellExecuteA()`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea) on Windows, an `open` subprocess on macOS, and an `xdg-open` subprocess on Linux.
+It uses [`ShellExecuteW()`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutew) with the `"open"` verb on Windows, an `open` subprocess on macOS, and an `xdg-open` subprocess on Linux.
 
 Its public API depends on the [`url` crate](https://crates.io/crates/url).
 
