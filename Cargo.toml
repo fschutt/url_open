@@ -1,6 +1,6 @@
 [package]
 name = "url_open"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2021"
 description = "Open URLs in the default browser"
 documentation = "https://docs.rs/url_open"
